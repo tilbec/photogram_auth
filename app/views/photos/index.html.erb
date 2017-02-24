@@ -1,0 +1,83 @@
+<div class="row">
+  <div class="col-md-8 col-md-offset-2">
+    <a href="/photos/new" class="btn btn-default btn-block"><i class="fa fa-plus" aria-hidden="true"></i></a>
+  </div>
+</div>
+
+<% @photos.each do |photo| %>
+  <div class="row">
+    <div class="col-md-8 col-md-offset-2">
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">
+          <a href="/users/<%= photo.user.id %>"><%= photo.user.username %></a>
+          <small>
+            <%= time_ago_in_words(photo.created_at) %> ago
+          </small>
+        </h3>
+        </div>
+        <div class="panel-body">
+          <img src="<%= photo.image %>" class="img-responsive">
+          <% @likes = Like.where(:photo_id => photo.id).pluck(:user_id) %>
+
+          <p>
+            <% if @likes.include? current_user.id %>
+              <% @like = photo.likes.where(:user_id => current_user.id).ids.first %>
+              <a href="/delete_like/<%= @like %>" class="btn btn-link">
+                <i class="fa fa-heart"></i>
+              </a>
+              sise
+              likes
+              this
+            <% else %>
+            <form action="/create_like">
+              <input type="hidden" name="photo_id" value="<%= photo.id %>">
+              <input type="hidden" name="user_id" value="<%= current_user.id %>">
+              <button class="btn btn-link">
+              <i class="fa fa-heart-o"></i>
+            </button>
+            </form>
+            <% end %>
+          </p>
+
+          <% if photo.user.id == current_user.id  %>
+            <a href ="photos/<%= photo.id %>/edit"></a>
+            <a href ="delete_photo/<%= photo.id %>"></a>
+          <% end %>
+
+          <a href="/users/<%= photo.user.id %>"><%= photo.user.username %></a>
+          <small>
+            <%= time_ago_in_words(photo.created_at) %> ago
+          </small>
+          <p><%= photo.caption %></p>
+
+          <% @comments = photo.comments %>
+          <% @comments.each do |comment| %>
+            <a href="/users/<%= comment.user.id %>"><%= comment.user.username %></a>
+            <small>
+              <%= time_ago_in_words(comment.created_at) %> ago
+            </small>
+            <p><%= comment.body %></p>
+          <% end %>
+
+          <form action="/create_comment" method="post">
+            <div class="input-group">
+               <input name="authenticity_token" type="hidden" value="<%= form_authenticity_token %>">
+              <input type="hidden" name="photo_id" value="<%= photo.id %>">
+              <input type="hidden" name="user_id" value="<%= current_user.id %>">
+
+              <input type="text" id="body" name="body" class="form-control" placeholder="Add a comment...">
+
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button submit">
+                  <i class="fa fa-commenting-o"></i>
+                </button>
+              </span>
+            </div>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+<% end  %>
