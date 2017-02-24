@@ -25,11 +25,9 @@ class LikesController < ApplicationController
 
     save_status = @like.save
 
-    if save_status == true
-      redirect_to("/likes/#{@like.id}", :notice => "Like created successfully.")
-    else
-      render("likes/new.html.erb")
-    end
+
+    redirect_to("/photos")
+
   end
 
   def edit
